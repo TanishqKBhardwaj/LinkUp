@@ -1,2 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Lavishly+Yours&family=Monsieur+La+Doulaise&display=swap');
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+    themes: all
+}
+
+.monsieur-la-doulaise-regular {
+  font-family: "Monsieur La Doulaise", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+.lavishly-yours-regular {
+  font-family: "Lavishly Yours", cursive;
+  font-weight: 600;
+  font-style:normal;
+}
+

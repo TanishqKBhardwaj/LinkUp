@@ -1,19 +1,17 @@
-import React from 'react'
-import ReactDOM from "react-dom/client";
+
 import { BrowserRouter, Routes, Route } from "react-router";
-import Navbar from './pages/navbar';
+import Layout from "./Layout";
 import toast, { Toaster } from 'react-hot-toast';
 function App() {
   return (
-    <>
+    <div data-theme="light">
     <Toaster/>
+     <Layout> 
       <BrowserRouter>
         <Routes>
-          <Route exact path="/navbar" element={<Navbar />} />
         </Routes>
-      </BrowserRouter>
-      <button className="btn btn-accent" onClick={()=>toast.success("I am successfuly installed")}>Accent</button>
-    </>
+      </BrowserRouter></Layout>
+    </div>
   )
 }
 
