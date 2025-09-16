@@ -6,11 +6,10 @@ function App() {
   return (
     <div data-theme="light">
     <Toaster/>
-     <Layout> 
+     
       <BrowserRouter>
-        <Routes>
-        </Routes>
-      </BrowserRouter></Layout>
+        <Layout/> 
+      </BrowserRouter>
     </div>
   )
 }

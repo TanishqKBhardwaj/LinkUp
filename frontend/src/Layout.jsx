@@ -4,15 +4,15 @@ import Sidebar from './common_comps/Sidebar'
 
 function Layout({children,sideBar=true}) {
   return (
-    <div data-theme="forest" className='flex w-full h-screen space-x-2'>
+    <div data-theme="forest" className='flex w-full h-screen '>
 
        
          <Sidebar/>
 
-       <div className=''>
+       
        <Navbar/>
        {children}
-       </div>
+
       
     </div>
   )
