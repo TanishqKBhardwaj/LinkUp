@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { Bell, House, Users, Waypoints, ChevronLeft, ChevronRight } from "lucide-react"
 import { NavLink } from "react-router-dom"
+import { useUserStore } from '../lib/authStore'
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(true)
+  const user=useUserStore((state)=>state.user)
 
   return (
     <div 
@@ -56,14 +58,16 @@ function Sidebar() {
       </nav>
 
       {/* User Section */}
+      { user &&
       <div className="p-2 flex items-center space-x-4 w-full">
         <img 
-          src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+          src={user?.picture}
           className="rounded-full w-12 h-12 object-contain"
           alt="User Avatar"
         />
-        {isOpen && <h3 className="font-bold text-lg">Tanishq Bhardwaj</h3>}
+        {isOpen && <h3 className="font-bold text-lg">{user?.name}</h3>}
       </div>
+}
     </div>
   )
 }

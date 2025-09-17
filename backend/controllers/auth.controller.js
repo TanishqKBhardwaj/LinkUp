@@ -1,6 +1,7 @@
 import User from "../models/User.js"
 import jwt from "jsonwebtoken"
 import {upsertStreamUsers} from "../lib/stream.js"
+import axios from "axios";
 
 export async function signIn(req, res) {
     const { email, name, profilePic } = req.body;
@@ -56,4 +57,55 @@ export async function signIn(req, res) {
 export async function signOut(req,res){
     res.clearCookie("jwt")
     return res.status(200).json({message:"Successfully Logged out !",success:true})
+}
+
+export async function googleOAuth(req,res){
+try {
+    const {code}=req.body
+    if (!code){
+        return res.status(400).json({success:false,message:"Auth code not provided to backend"});
+    }
+    const client_id=process.env.GOOGLE_OAUTH_CLIENT_ID
+    const client_secret=process.env.GOOGLE_OAUTH_SECRET_ID
+    const redirect_uri=process.env.REDIRECT_URL
+
+    if(!client_id || !client_secret || !redirect_uri){
+        console.log(client_id,client_secret,redirect_uri)
+        return res.status(400).json({success:false,message:"Google OAuth credentials are missing"});
+    }
+
+     const tokenRes = await axios.post(
+      "https://oauth2.googleapis.com/token",
+      {
+        code,
+        client_id,
+        client_secret,
+        redirect_uri,
+        grant_type: "authorization_code",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+     const { access_token, id_token } = tokenRes.data;
+
+    // Step 2: Use access_token to get user info
+    const userRes = await axios.get(
+      "https://www.googleapis.com/oauth2/v2/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+     const user = userRes.data;
+     return res.status(200).json({success:true,message:"Google Oauth successful",user});
+
+} catch (error) {
+    console.error("Error occured at googleOAuth controller:",error.response)
+    return res.status(500).json({success:false,message:"Google Oauth unsuccessful"})
+}
 }
