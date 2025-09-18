@@ -5,8 +5,10 @@ import { persist } from "zustand/middleware";
   persist(
     (set) => ({
       user: null,
+      theme:"forest",
       setUser: (user) => set({ user }),
       logout: () => set({ user: null }),
+      setTheme:(newTheme)=>set({theme:newTheme})
     }),
     {
       name: "user-storage", // unique name for storage

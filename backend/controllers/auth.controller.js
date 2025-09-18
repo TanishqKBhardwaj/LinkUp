@@ -6,10 +6,11 @@ import axios from "axios";
 export async function signIn(req, res) {
     const { email, name, profilePic } = req.body;
     try {
-        if (!email || !name || !profilePic)
-            return res.status(400).json({ message: "User Credentials are missing",success:false });
+       
         let user =  await User.findOne({ email: email });
         if (!user) {
+             if (!email || !name || !profilePic)
+             return res.status(400).json({ message: "User Credentials are missing",success:false });
             user = await User.create({
                 name, email, profilePic
             });
@@ -82,6 +83,7 @@ try {
         client_secret,
         redirect_uri,
         grant_type: "authorization_code",
+        access_type:"offline"
       },
       {
         headers: {
@@ -90,7 +92,7 @@ try {
       }
     );
 
-     const { access_token, id_token } = tokenRes.data;
+     const { access_token,refresh_token, id_token } = tokenRes.data;
 
     // Step 2: Use access_token to get user info
     const userRes = await axios.get(

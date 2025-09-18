@@ -63,9 +63,9 @@ export const getMyFriends=async(req,res)=>{
 
         const firstConnections=await User.find({
             _id:{$in:userFriends}
-        });
+        }).select("name email profilePic");
  
-        return res.status(200).json({success:true,message:"Successfully fetched friends data",data:firstConnections});
+        return res.status(200).json({success:true,message:"Successfully fetched friends data",firstConnections});
 
 
     } catch (error) {

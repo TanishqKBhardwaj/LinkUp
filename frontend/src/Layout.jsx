@@ -2,16 +2,18 @@ import React from 'react'
 import Navbar from './common_comps/Navbar'
 import Sidebar from './common_comps/Sidebar'
 
-function Layout({children,sideBar=true}) {
+function Layout({children}) {
   return (
-    <div data-theme="forest" className='flex w-full h-screen '>
+    <div  className='flex w-full h-screen '>
 
        
          <Sidebar/>
 
-       
-       <Navbar/>
+       <div className='flex flex-col gap-2 w-full'>
+            <Navbar/>
        {children}
+       </div>
+      
 
       
     </div>
