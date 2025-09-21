@@ -22,7 +22,7 @@ export const getRecommendatedUsers = async (req, res) => {
           !userFriends.some(f => f.toString() === friend.toString()) // not already a friend
         ) {
           const existingList = secondExpectedFriends.get(friend.toString()) || [];
-          existingList.push(myFriend.name);
+          existingList.push(myFriend.profilePic);
           secondExpectedFriends.set(friend.toString(), existingList);
         }
       });
@@ -31,18 +31,21 @@ export const getRecommendatedUsers = async (req, res) => {
     // 3. Fetch second-degree connections
     const secondConnectionsFromDb = await User.find({
       _id: { $in: Array.from(secondExpectedFriends.keys()) }
-    }).select("name email");
+    }).select(" _id name email profilePic");
 
     const finalSecondConnections = secondConnectionsFromDb.map(connection => ({
+      _id:connection._id,
       name: connection.name,
       email: connection.email,
+      picture:connection.profilePic,
       closeFirstFriends: secondExpectedFriends.get(connection._id.toString())
     }));
+
 
     return res.status(200).json({
       success: true,
       message: "Successfully found second connections",
-      data: finalSecondConnections
+      secondConnections:finalSecondConnections
     });
 
   } catch (error) {
@@ -193,3 +196,35 @@ export const outGoingFriendReqs=async(req,res)=>{
     return res.status(500).json({success:false,message:"Unable to fetch outgoing friend reqs at the moment"});
   }
 }
+
+
+export const searchByUserInfo = async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    if (!search || typeof search !== "string") {
+      return res.status(400).json({ success: false, message: "Invalid search input" });
+
+    }
+    if(search==req.user.name || search==req.user.email){
+        return res.status(400).json({ success: false, message: "You cannot connect with yourself" });
+      }
+
+    const person = await User.findOne({
+      $or: [
+        { name: { $regex: `^${search}$`, $options: "i" } },
+        { email: { $regex: `^${search}$`, $options: "i" } }
+      ]
+    });
+
+    if (!person)
+      return res.status(404).json({ success: false, message: "User not found" });
+
+    return res.status(200).json({ success: true, message: "User found successfully", person });
+
+  } catch (error) {
+    console.error("Error occurred in searchByUserInfo:", error);
+    return res.status(500).json({ success: false, message: "Unable to process your request at the moment" });
+  }
+};
+

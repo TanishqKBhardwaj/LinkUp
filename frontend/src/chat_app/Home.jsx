@@ -1,13 +1,38 @@
-import { UsersRound } from "lucide-react"
-import { getFriends } from "../api/user"
+import { UsersRound,Search, MoveLeftIcon } from "lucide-react"
+import { getFriends,getRecommendations,searchByUserInfo } from "../api/user"
 import { useEffect,useState } from "react"
-import {Link} from "react-router-dom"
+import GetRecommendationCard from "../common_comps/GetRecommendationCard"
+
+import FriendCard from "../common_comps/FriendCard"
+import toast from "react-hot-toast"
 function Home() {
     const [friends, setFriends] = useState([])
+    const [recommendations,setRecommendations]=useState([])
+    const [search,setSearch]=useState("")
+    const [searchedUser,setSearchedUser]=useState(null)
+    const [disableSearch,setDisableSearch]=useState(false)
+
+    const searchUser=async()=>{
+        try {
+            setDisableSearch(true)
+            if(search.trim()==="")
+            {
+                toast.warning("Search cannot be empty")
+                return
+            }
+            setSearchedUser(await searchByUserInfo(search))
+        } catch (error) {
+            toast.error("Unable to search at the moment")
+            
+        }finally{
+            setDisableSearch(false)
+        }
+    }
     useEffect(() => {
         (async ()=>{
         setFriends( await getFriends())
-        console.log(friends.length)})()
+        setRecommendations(await getRecommendations())
+        })()
     },[])
     return (
         <div className='mt-10 flex flex-col gap-5  w-full'>
@@ -23,21 +48,7 @@ function Home() {
                     <div className="grid grid-cols-1 md:grid-cols-3 justify-between items-center sm:gap-1 gap-3  p-2">
                         {
                             friends.map((friend) =>
-                                <div className="card sm:w-full md:w-96 bg-base-100 card-md shadow-sm hover:shadow-primary/30 hover:shadow-md">
-                                    <div className="card-body">
-                                      <div className="flex gap-2 p-2">
-                                        <img src={friend.profilePic} className="w-10 h-10 rounded-full object-contain"/>
-                                        <div className="flex flex-col gap-1">
-                                         <h1 className="text-xl font-semibold text-base-content">{friend.name}</h1>
-                                         <h2 className="text-sm font-light">{friend.email}</h2>
-                                        </div>
-                                        
-                                      </div>
-                                        <div className="justify-center w-full card-actions">
-                                            <Link to={`/chat/${friend._id}`} className="btn btn-outline w-full rounded-3xl hover:bg-primary/30 hover:text-primary">Chat</Link>
-                                        </div>
-                                    </div>
-                                </div>
+                                <FriendCard person={friend} key={friend._id}/>
                             )
                         }
 
@@ -52,6 +63,55 @@ function Home() {
 
             )
             }
+
+            {/*Recommendations*/}
+
+                <div className="flex flex-wrap justify-between w-full p-2 ">
+                 <h3 className='text-base-content p-2  font-bold text-3xl'>Your Recommended Friends</h3>
+                 <div className="flex space-x-2 items-center">
+                    <button className="cursor-pointer hover:shadow-md hover:shadow-primary/30 p-2 rounded-xl" onClick={()=>searchUser()} disabled={disableSearch}>
+                       <Search />
+                    </button>
+                   
+                 <input placeholder="Search by name/email" value={search} onChange={(e)=>setSearch(e.target.value)} className="w-full p-2 rounded-xl  focus:ring-2 focus:ring-primary  hover:shadow-primary/30 hover:shadow-md"></input>
+                 </div>
+                 
+                </div>
+                
+
+                { 
+
+                 searchedUser?(<div className="flex flex-col gap-3 items-start p-2">
+                    <button className="btn  hover:shadow-md hover:shadow-primary/30" onClick={()=>setSearchedUser(null)}><MoveLeftIcon/>Back to Recommendations</button>
+                    
+                       <GetRecommendationCard person={searchedUser} />
+
+
+
+                 </div>):(
+                    recommendations?.length>0?(
+                         <div className="grid grid-cols-1 md:grid-cols-3 justify-between items-center sm:gap-1 gap-3  p-2">
+                        {
+                            recommendations.map((recommendation) =>
+                                <GetRecommendationCard person={recommendation} key={recommendation._id}/>
+                            )
+                        }
+
+
+                    </div>
+
+                    ):(
+                        <div className="flex flex-col items-center gap-3 ">
+                        <h1 className="font-semibold text-xl text-base-content">You have currently no recommendation of friends</h1>
+                        <p className="font-light">Build your network to connect</p>
+                    </div>
+                    )
+
+                )
+                }
+    
+
+
 
 
 

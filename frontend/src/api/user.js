@@ -4,18 +4,67 @@ import { useUserStore } from "../lib/authStore.js"
 
 const user =useUserStore.getState()
 export const getFriends=async () => {
-   console.log("I reached getFriends")
  try {
     const res=await api.get("/users/friends")
     if(res?.data?.success){
-      console.log("Friends res",res.data.firstConnections)
         return res?.data?.firstConnections
     }
  } catch (error) {
     
-    console.log(error.response.message)
-    toast.error(error?.response?.message)
+    console.log(error?.response?.data?.message)
+    toast.error(error?.response?.data?.message)
     return [];
     
  }  
+}
+
+export const getRecommendations=async()=>{
+
+   try {
+      console.log("I reached getRecommendations")
+      const res=await api.get('/users/')
+      if(res?.data?.success){
+         console.log(res?.data.secondConnections)
+         return res?.data.secondConnections
+      }
+   } catch (error) {
+      console.log("Error occured at getRecommendations:",error?.response?.data?.message)
+      toast.error(error?.response?.data?.message)
+      return []
+      
+   }
+
+}
+
+export const sendConnectionReq=async(receiverId)=>{
+
+   try {
+      const res=await api.post(`/users/friend-req/${receiverId}`)
+      if(res?.data?.success){
+         toast.success(res?.data?.message)
+      }
+   } catch (error) {
+
+      console.log(error?.response?.data?.message)
+      toast.error(error?.response?.data?.message)
+      
+   }
+
+}
+
+
+export const searchByUserInfo =async(search)=>{
+   try {
+      const res=await api.get("/users/searchUser",{
+         params:{search}
+      })
+      if (res?.data?.success){
+         return res?.data?.person
+      }
+   } catch (error) {
+      console.log(error?.response?.data?.message)
+      toast.error(error?.response?.data?.message)
+      return null
+      
+   }
 }
