@@ -169,12 +169,12 @@ export const getAllFriendReqs=async(req,res)=>{
 
     const user=req.user
     //Filtered by pending req of receiver and sort by most recent first
-    const incomingFriendReqs=await FriendReq.find({receiver:user._id,status:"pending"}).populate("sender","name profilePic").sort({createdAt:-1})
+    const incomingFriendReqs=await FriendReq.find({receiver:user._id,status:"pending"}).populate("sender","name email profilePic").sort({createdAt:-1})
      //Filtered by accepted req ,sent by user and sort by most recent first
-    const acceptedFriendReqs=await FriendReq.find({sender:user._id,status:"accepted"}).populate("receiver","name profilePic").sort({createdAt:-1})
+    const acceptedFriendReqs=await FriendReq.find({sender:user._id,status:"accepted"}).populate("receiver","name email  profilePic").sort({createdAt:-1})
 
 
-    return res.status(200).json({success:true,message:"Successfully fetched all the friend requests",data:[incomingFriendReqs,acceptedFriendReqs]})
+    return res.status(200).json({success:true,message:"Successfully fetched all the friend requests",userNotifications:{incomingFriendReqs,acceptedFriendReqs}})
 
     
   } catch (error) {

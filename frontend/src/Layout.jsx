@@ -4,12 +4,12 @@ import Sidebar from './common_comps/Sidebar'
 
 function Layout({children}) {
   return (
-    <div  className='flex w-full h-screen '>
+    <div  className='flex w-full h-full '>
 
        
          <Sidebar/>
 
-       <div className='flex flex-col gap-2 w-full'>
+       <div className='flex flex-col gap-2  w-full'>
             <Navbar/>
        {children}
        </div>

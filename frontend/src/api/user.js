@@ -53,6 +53,24 @@ export const sendConnectionReq=async(receiverId)=>{
 }
 
 
+
+export const getAllFriendReqs=async()=>{
+   try {
+      const res=await api.get('/users/friend-req')
+      if (res?.data?.success){
+         return {incoming:res?.data?.userNotifications?.incomingFriendReqs,
+                 outgoing:res?.data?.userNotifications?.acceptedFriendReqs
+         }
+      }
+   } catch (error) {
+
+      console.log("Error happend at getAllFriendReqs APi:",error?.response?.data?.message)
+      toast.error(error?.response?.data?.message)
+      
+   }
+}
+
+
 export const searchByUserInfo =async(search)=>{
    try {
       const res=await api.get("/users/searchUser",{

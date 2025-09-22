@@ -8,19 +8,24 @@ export const  googleAuth=async (codeResponse)=>{
     const res=await api.post("/auth/google",{code})
     const user={name:res?.data?.user?.name,
         email:res?.data?.user?.email,
-        picture:res?.data?.user?.picture
+        picture:res?.data?.user?.picture,
+        googleId:res?.data?.user?.id
     }
-    setUser(user)
     const signInResponse=await api.post("/auth/signIn",{
         name:user.name,
         email:user.email,
-        profilePic:user.picture
+        profilePic:user.picture,
+        googleId:user.googleId
+        
     })
-    if(signInResponse?.data?.success)
+    if(signInResponse?.data?.success){
+        user.profilePic=signInResponse?.data.user?.profilePic
+        setUser(user)
+    }
     toast.success("Login Successful")
    } catch (error) {
     console.log(error.response?.data?.message)
-    toast.error("Unable to login at the moment")
+    toast.error("Unable to login at the moment:",error.response?.data?.message)
    }
 }
 
