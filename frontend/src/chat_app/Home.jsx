@@ -103,7 +103,7 @@ function Home() {
                     ):(
                         <div className="flex flex-col items-center gap-3 ">
                         <h1 className="font-semibold text-xl text-base-content">You have currently no recommendation of friends</h1>
-                        <p className="font-light">Build your network to connect</p>
+                        <p className="font-light">Build your network to connect with others</p>
                     </div>
                     )
 
